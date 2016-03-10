@@ -18,7 +18,7 @@
 
 import KituraSys
 import KituraNet
-import KituraRouter
+import Kitura
 
 import LoggerAPI
 import HeliumLogger
