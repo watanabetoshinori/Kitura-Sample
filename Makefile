@@ -25,3 +25,5 @@ Kitura-CI/build/Makefile:
 run: build
 	@echo --- Invoking KituraSample executable
 	./.build/debug/KituraSample
+
+.PHONY: run
