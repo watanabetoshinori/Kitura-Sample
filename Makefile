@@ -21,3 +21,7 @@ Kitura-CI/build/Makefile:
 	@echo --- Fetching Kitura-CI submodule
 	git submodule init
 	git submodule update --remote --merge
+
+run: build
+	@echo --- Invoking KituraSample executable
+	./.build/debug/KituraSample
