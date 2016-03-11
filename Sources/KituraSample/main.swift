@@ -135,6 +135,14 @@ router.get("/users/:user") { request, response, next in
     next()
 }
 
+// Uses multiple handler blocks
+router.get("/multi", handler: { request, response, next in
+    response.status(HttpStatusCode.OK).send("I'm here!\n")
+}, { request, response, next in
+    response.send("Me too!\n")
+    next()
+})
+
 // Example using templating of strings
 // Support for Mustache implented for OSX only yet
 router.setTemplateEngine(MustacheTemplateEngine())
