@@ -49,7 +49,6 @@ class BasicAuthMiddleware: RouterMiddleware {
 
         Log.info("Authorization: \(authString)")
 
-        next()
         // Check authorization string in database to approve the request if fail
         // response.error = NSError(domain: "AuthFailure", code: 1, userInfo: [:])
        
