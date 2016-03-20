@@ -147,8 +147,7 @@ router.get("/multi") { request, response, next in
     next()
 }
 
-// Example using templating of strings
-// Support for Mustache implented for OSX only yet
+// Support for Mustache implemented for OSX only yet
 router.setTemplateEngine(MustacheTemplateEngine())
 
 router.get("/document") { _, response, next in
