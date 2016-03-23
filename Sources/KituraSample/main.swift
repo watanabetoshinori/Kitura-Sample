@@ -58,9 +58,9 @@ class BasicAuthMiddleware: RouterMiddleware {
 
 
 // This route executes the echo middleware
-router.use("/*", middleware: BasicAuthMiddleware())
+router.all("/*", middleware: BasicAuthMiddleware())
 
-router.use("/static/*", middleware: StaticFileServer())
+router.all("/static/*", middleware: StaticFileServer())
 
 router.get("/hello") { _, response, next in
      response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
