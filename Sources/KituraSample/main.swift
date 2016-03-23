@@ -30,7 +30,7 @@ import HeliumLogger
 import Foundation
 
 import KituraMustache
-
+import KituraStencil
 
 // All Web apps need a router to define routes
 let router = Router()
