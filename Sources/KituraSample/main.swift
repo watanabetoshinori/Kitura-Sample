@@ -148,7 +148,7 @@ router.get("/multi") { request, response, next in
 }
 
 // Support for Mustache implemented for OSX only yet
-router.setTemplateEngine(MustacheTemplateEngine())
+router.setDefaultTemplateEngine(MustacheTemplateEngine())
 
 router.get("/document") { _, response, next in
     defer {
