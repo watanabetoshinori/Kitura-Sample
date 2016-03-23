@@ -32,5 +32,5 @@ let package = Package(
         .Package(url: "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git",
                      majorVersion: 0, minor: 0),
     ],
-    exclude: ["Makefile", "Kitura-CI"])
+    exclude: ["Makefile", "Kitura-Build"])
 
