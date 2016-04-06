@@ -29,9 +29,6 @@ import HeliumLogger
 
 import Foundation
 
-import KituraMustache
-
-
 // All Web apps need a router to define routes
 let router = Router()
 
@@ -145,33 +142,6 @@ router.get("/multi", handler: { request, response, next in
 router.get("/multi") { request, response, next in
     response.status(HttpStatusCode.OK).send("I come afterward..\n")
     next()
-}
-
-// Support for Mustache implemented for OSX only yet
-router.setTemplateEngine(MustacheTemplateEngine())
-
-router.get("/document") { _, response, next in
-    defer {
-        next()
-    }
-    do {
-        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
-        var context: [String: Any] = [
-            "name": "Arthur",
-            "date": NSDate(),
-            "realDate": NSDate().dateByAddingTimeInterval(60*60*24*3),
-            "late": true
-        ]
-
-        // Let template format dates with `{{format(...)}}`
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .MediumStyle
-        context["format"] = dateFormatter
-
-        try response.render("document", context: context).end()
-    } catch {
-        Log.error("Failed to render template \(error)")
-    }
 }
 
 // Handles any errors that get set
