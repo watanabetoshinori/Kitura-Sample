@@ -148,6 +148,7 @@ router.get("/multi") { request, response, next in
 }
 
 // Support for Mustache implemented for OSX only yet
+#if !os(Linux)
 router.setTemplateEngine(MustacheTemplateEngine())
 
 router.get("/document") { _, response, next in
@@ -173,6 +174,7 @@ router.get("/document") { _, response, next in
         Log.error("Failed to render template \(error)")
     }
 }
+#endif
 
 // Handles any errors that get set
 router.error { request, response, next in
