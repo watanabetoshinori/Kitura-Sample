@@ -159,13 +159,13 @@ router.get("/document") { _, response, next in
         var context: [String: Any] = [
             "name": "Arthur",
             "date": NSDate(),
-            "realDate": NSDate().dateByAddingTimeInterval(60*60*24*3),
+            "realDate": NSDate().addingTimeInterval(60*60*24*3),
             "late": true
         ]
 
         // Let template format dates with `{{format(...)}}`
         let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .MediumStyle
+        dateFormatter.dateStyle = .mediumStyle
         context["format"] = dateFormatter
 
         try response.render("document", context: context).end()
