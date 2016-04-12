@@ -202,7 +202,5 @@ router.all { request, response, next in
 }
 
 // Listen on port 8090
-let server = HttpServer.listen(8090,
-    delegate: router)
-
+let server = HttpServer.listen(8090, delegate: router)
 Server.run()
