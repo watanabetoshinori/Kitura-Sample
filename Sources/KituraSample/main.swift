@@ -66,8 +66,9 @@ router.get("/hello") { _, response, next in
      response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
      do {
          try response.status(HttpStatusCode.OK).send("Hello World, from Kitura!").end()
+     } catch {
+         Log.error("Failed to send response \(error)")
      }
-     catch {}
      next()
 }
 
@@ -76,8 +77,9 @@ router.post("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         try response.status(HttpStatusCode.OK).send("Got a POST request").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
     next()
 }
 
@@ -86,8 +88,9 @@ router.put("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         try response.status(HttpStatusCode.OK).send("Got a PUT request").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
     next()
 }
 
@@ -96,8 +99,9 @@ router.delete("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         try response.status(HttpStatusCode.OK).send("Got a DELETE request").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
     next()
 }
 
@@ -113,9 +117,9 @@ router.get("/error") { _, response, next in
 router.get("/redir") { _, response, next in
     do {
         try response.redirect("http://www.ibm.com")
+    } catch {
+         Log.error("Failed to redirect \(error)")
     }
-    catch {}
-
     next()
 }
 
@@ -129,8 +133,9 @@ router.get("/users/:user") { request, response, next in
             "<!DOCTYPE html><html><body>" +
             "<b>User:</b> \(p1)" +
             "</body></html>\n\n").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
     next()
 }
 
@@ -182,19 +187,25 @@ router.error { request, response, next in
     do {
         try response.send("Caught the error: \(response.error!.localizedDescription)").end()
     }
-    catch {}
+    catch {
+            Log.error("Failed to send response \(error)")
+    }
   next()
 }
 
 // A custom Not found handler
 router.all { request, response, next in
-    if  response.getStatusCode() == .NOT_FOUND  {
+             Log.error("Failed to send response \(error)")
+}
+if  response.getStatusCode() == .NOT_FOUND  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
                 try response.send("Route not found in Sample application!").end()
             }
-            catch {}
+            catch {
+                Log.error("Failed to send response \(error)")
+            }
         }
     }
 
