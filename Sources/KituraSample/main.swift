@@ -195,9 +195,7 @@ router.error { request, response, next in
 
 // A custom Not found handler
 router.all { request, response, next in
-             Log.error("Failed to send response \(error)")
-}
-if  response.getStatusCode() == .NOT_FOUND  {
+        if  response.getStatusCode() == .NOT_FOUND  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
