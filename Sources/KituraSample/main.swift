@@ -58,9 +58,9 @@ class BasicAuthMiddleware: RouterMiddleware {
 
 
 // This route executes the echo middleware
-router.all("/*", middleware: BasicAuthMiddleware())
+router.all(middleware: BasicAuthMiddleware())
 
-router.all("/static/*", middleware: StaticFileServer())
+router.all("/static", middleware: StaticFileServer())
 
 router.get("/hello") { _, response, next in
      response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
@@ -69,7 +69,6 @@ router.get("/hello") { _, response, next in
      } catch {
          Log.error("Failed to send response \(error)")
      }
-     next()
 }
 
 // This route accepts POST requests
@@ -80,7 +79,6 @@ router.post("/hello") {request, response, next in
     } catch {
         Log.error("Failed to send response \(error)")
     }
-    next()
 }
 
 // This route accepts PUT requests
@@ -91,7 +89,6 @@ router.put("/hello") {request, response, next in
     } catch {
         Log.error("Failed to send response \(error)")
     }
-    next()
 }
 
 // This route accepts DELETE requests
@@ -102,7 +99,6 @@ router.delete("/hello") {request, response, next in
     } catch {
         Log.error("Failed to send response \(error)")
     }
-    next()
 }
 
 // Error handling example
@@ -136,7 +132,6 @@ router.get("/users/:user") { request, response, next in
     } catch {
         Log.error("Failed to send response \(error)")
     }
-    next()
 }
 
 // Uses multiple handler blocks
@@ -190,7 +185,6 @@ router.error { request, response, next in
     catch {
             Log.error("Failed to send response \(error)")
     }
-  next()
 }
 
 // A custom Not found handler
@@ -206,7 +200,6 @@ router.all { request, response, next in
             }
         }
     }
-
     next()
 }
 
