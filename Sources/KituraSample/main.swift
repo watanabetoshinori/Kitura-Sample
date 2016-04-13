@@ -177,9 +177,15 @@ router.get("/trimmer") { _, response, next in
 
 // Handles any errors that get set
 router.error { request, response, next in
-  response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+    response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
-        try response.send("Caught the error: \(response.error!.localizedDescription)").end()
+        let errorDescription: String
+        if let error = response.error {
+            errorDescription = "\(error)"
+        } else {
+            errorDescription = "Unknown error"
+        }
+        try response.send("Caught the error: \(errorDescription)").end()
     }
     catch {
         Log.error("Failed to send response \(error)")
