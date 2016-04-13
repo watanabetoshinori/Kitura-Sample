@@ -182,7 +182,7 @@ router.error { request, response, next in
         try response.send("Caught the error: \(response.error!.localizedDescription)").end()
     }
     catch {
-            Log.error("Failed to send response \(error)")
+        Log.error("Failed to send response \(error)")
     }
 }
 
