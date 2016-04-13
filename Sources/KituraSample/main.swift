@@ -30,7 +30,6 @@ import HeliumLogger
 import Foundation
 
 import KituraMustache
-import KituraStencil
 
 // All Web apps need a router to define routes
 let router = Router()
@@ -148,8 +147,6 @@ router.get("/multi") { request, response, next in
 }
 
 // Support for Mustache implemented for OSX only yet
-router.addTemplateEngine(StencilTemplateEngine())
-
 #if !os(Linux)
 router.setDefaultTemplateEngine(MustacheTemplateEngine())
 
@@ -177,26 +174,6 @@ router.get("/trimmer") { _, response, next in
     }
 }
 #endif
-
-router.get("/articles") { _, response, next in
-    defer {
-        next()
-    }
-    do {
-        // the example from https://github.com/kylef/Stencil
-        var context: [String: Any] = [
-            "articles": [
-                [ "title": "Migrating from OCUnit to XCTest", "author": "Kyle Fuller" ],
-                [ "title": "Memory Management with ARC", "author": "Kyle Fuller" ],
-            ]
-        ]
-
-        // we have to specify file extension here since Stencil is not the default engine
-        try response.render("document.stencil", context: context).end()
-    } catch {
-        Log.error("Failed to render template \(error)")
-    }
-}
 
 // Handles any errors that get set
 router.error { request, response, next in
