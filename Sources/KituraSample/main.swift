@@ -31,7 +31,6 @@ import Foundation
 
 import KituraMustache
 
-
 // All Web apps need a router to define routes
 let router = Router()
 
@@ -58,17 +57,17 @@ class BasicAuthMiddleware: RouterMiddleware {
 
 
 // This route executes the echo middleware
-router.all("/*", middleware: BasicAuthMiddleware())
+router.all(middleware: BasicAuthMiddleware())
 
-router.all("/static/*", middleware: StaticFileServer())
+router.all("/static", middleware: StaticFileServer())
 
 router.get("/hello") { _, response, next in
      response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
      do {
          try response.status(HttpStatusCode.OK).send("Hello World, from Kitura!").end()
+     } catch {
+         Log.error("Failed to send response \(error)")
      }
-     catch {}
-     next()
 }
 
 // This route accepts POST requests
@@ -76,9 +75,9 @@ router.post("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         try response.status(HttpStatusCode.OK).send("Got a POST request").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
-    next()
 }
 
 // This route accepts PUT requests
@@ -86,9 +85,9 @@ router.put("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         try response.status(HttpStatusCode.OK).send("Got a PUT request").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
-    next()
 }
 
 // This route accepts DELETE requests
@@ -96,9 +95,9 @@ router.delete("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         try response.status(HttpStatusCode.OK).send("Got a DELETE request").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
-    next()
 }
 
 // Error handling example
@@ -113,9 +112,9 @@ router.get("/error") { _, response, next in
 router.get("/redir") { _, response, next in
     do {
         try response.redirect("http://www.ibm.com")
+    } catch {
+         Log.error("Failed to redirect \(error)")
     }
-    catch {}
-
     next()
 }
 
@@ -129,9 +128,9 @@ router.get("/users/:user") { request, response, next in
             "<!DOCTYPE html><html><body>" +
             "<b>User:</b> \(p1)" +
             "</body></html>\n\n").end()
+    } catch {
+        Log.error("Failed to send response \(error)")
     }
-    catch {}
-    next()
 }
 
 // Uses multiple handler blocks
@@ -149,9 +148,9 @@ router.get("/multi") { request, response, next in
 
 // Support for Mustache implemented for OSX only yet
 #if !os(Linux)
-router.setTemplateEngine(MustacheTemplateEngine())
+router.setDefaultTemplateEngine(MustacheTemplateEngine())
 
-router.get("/document") { _, response, next in
+router.get("/trimmer") { _, response, next in
     defer {
         next()
     }
@@ -178,31 +177,37 @@ router.get("/document") { _, response, next in
 
 // Handles any errors that get set
 router.error { request, response, next in
-  response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+    response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
-        try response.send("Caught the error: \(response.error!.localizedDescription)").end()
+        let errorDescription: String
+        if let error = response.error {
+            errorDescription = "\(error)"
+        } else {
+            errorDescription = "Unknown error"
+        }
+        try response.send("Caught the error: \(errorDescription)").end()
     }
-    catch {}
-  next()
+    catch {
+        Log.error("Failed to send response \(error)")
+    }
 }
 
 // A custom Not found handler
 router.all { request, response, next in
-    if  response.getStatusCode() == .NOT_FOUND  {
+        if  response.getStatusCode() == .NOT_FOUND  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
                 try response.send("Route not found in Sample application!").end()
             }
-            catch {}
+            catch {
+                Log.error("Failed to send response \(error)")
+            }
         }
     }
-
     next()
 }
 
 // Listen on port 8090
-let server = HttpServer.listen(8090,
-    delegate: router)
-
+let server = HttpServer.listen(8090, delegate: router)
 Server.run()

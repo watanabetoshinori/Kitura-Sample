@@ -11,11 +11,14 @@
 
 This is a sample [Kitura](https://github.com/IBM-Swift/Kitura) application. See instructions for [Installation on OS X ](https://github.com/IBM-Swift/Kitura#installation-os-x) or [Installation on Linux](https://github.com/IBM-Swift/Kitura#installation-linux-apt-based).
 
-## Build and run
-1. `make run`
+## Clone, build and run
+1. `git clone https://github.com/IBM-Swift/Kitura-Sample.git && cd Kitura-Sample`
+> Note: do not use the GitHub "Download ZIP" button
+
+2. `make run`
 
   You should see message _Listening on port 8090_. The result executable is located in `.build/debug` directory: `./.build/debug/KituraSample`
-2. Open your browser at [http://localhost:8090](http://localhost:8090)
+3. Open your browser at [http://localhost:8090](http://localhost:8090)
 
 ## Kitura Wiki
 Feel free to visit our [Wiki](https://github.com/IBM-Swift/Kitura/wiki) for our roadmap and some tutorials.
