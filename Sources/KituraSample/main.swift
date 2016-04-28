@@ -29,7 +29,7 @@ import HeliumLogger
 
 import Foundation
 
-import KituraMustache
+//import KituraMustache
 
 // All Web apps need a router to define routes
 let router = Router()
@@ -147,33 +147,33 @@ router.get("/multi") { request, response, next in
 }
 
 // Support for Mustache implemented for OSX only yet
-#if !os(Linux)
-router.setDefaultTemplateEngine(MustacheTemplateEngine())
-
-router.get("/trimmer") { _, response, next in
-    defer {
-        next()
-    }
-    do {
-        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
-        var context: [String: Any] = [
-            "name": "Arthur",
-            "date": NSDate(),
-            "realDate": NSDate().addingTimeInterval(60*60*24*3),
-            "late": true
-        ]
-
-        // Let template format dates with `{{format(...)}}`
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .mediumStyle
-        context["format"] = dateFormatter
-
-        try response.render("document", context: context).end()
-    } catch {
-        Log.error("Failed to render template \(error)")
-    }
-}
-#endif
+//#if !os(Linux)
+//router.setDefaultTemplateEngine(MustacheTemplateEngine())
+//
+//router.get("/trimmer") { _, response, next in
+//    defer {
+//        next()
+//    }
+//    do {
+//        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
+//        var context: [String: Any] = [
+//            "name": "Arthur",
+//            "date": NSDate(),
+//            "realDate": NSDate().addingTimeInterval(60*60*24*3),
+//            "late": true
+//        ]
+//
+//        // Let template format dates with `{{format(...)}}`
+//        let dateFormatter = NSDateFormatter()
+//        dateFormatter.dateStyle = .mediumStyle
+//        context["format"] = dateFormatter
+//
+//        try response.render("document", context: context).end()
+//    } catch {
+//        Log.error("Failed to render template \(error)")
+//    }
+//}
+//#endif
 
 // Handles any errors that get set
 router.error { request, response, next in
@@ -194,7 +194,7 @@ router.error { request, response, next in
 
 // A custom Not found handler
 router.all { request, response, next in
-        if  response.getStatusCode() == .NOT_FOUND  {
+        if  response.statusCode == .NOT_FOUND  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
@@ -209,5 +209,5 @@ router.all { request, response, next in
 }
 
 // Listen on port 8090
-let server = HttpServer.listen(8090, delegate: router)
+let server = HttpServer.listen(port: 8090, delegate: router)
 Server.run()
