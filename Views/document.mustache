@@ -1,3 +1,4 @@
+{{!
 /**
  * Copyright IBM Corporation 2016
  *
@@ -14,20 +15,11 @@
  * limitations under the License.
  **/
 
-import PackageDescription
+The example from https://github.com/groue/GRMustache.swift/blob/master/README.md
+}}
 
-let package = Package(
-    name: "KituraSample",
-    targets: [
-        Target(
-            name: "KituraSample",
-            dependencies: []
-        )
-    ],
-    dependencies: [
-        .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 0, minor: 11),
-        .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 0, minor: 6),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-MustacheTemplateEngine.git", majorVersion: 0, minor: 12),
-    ],
-    exclude: ["Makefile", "Kitura-Build"])
-
+Hello {{name}}
+Your beard trimmer will arrive on {{format(date)}}.
+{{#late}}
+Well, on {{format(realDate)}} because of a Martian attack.
+{{/late}}
