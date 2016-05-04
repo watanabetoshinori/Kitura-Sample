@@ -1,0 +1,9 @@
+applications:
+- path: .
+  memory: 256M
+  instances: 1
+  domain: mybluemix.net
+  name: <APP_NAME_HERE>
+  host: <HOST_NAME_HERE>
+  disk_quota: 1024M
+  buildpack: https://github.com/IBM-Swift/swift-buildpack
