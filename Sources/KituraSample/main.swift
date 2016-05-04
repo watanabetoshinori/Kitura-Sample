@@ -16,9 +16,12 @@
 
 // KituraSample shows examples for creating custom routes.
 
+import Foundation
+
 import KituraSys
 import KituraNet
 import Kitura
+import KituraMustache
 
 import LoggerAPI
 import HeliumLogger
@@ -26,10 +29,6 @@ import HeliumLogger
 #if os(Linux)
     import Glibc
 #endif
-
-import Foundation
-
-import KituraMustache
 
 // All Web apps need a router to define routes
 let router = Router()
@@ -43,18 +42,16 @@ Log.logger = HeliumLogger()
 */
 class BasicAuthMiddleware: RouterMiddleware {
     func handle(request: RouterRequest, response: RouterResponse, next: () -> Void) {
-
         let authString = request.headers["Authorization"]
-
         Log.info("Authorization: \(authString)")
-
         // Check authorization string in database to approve the request if fail
         // response.error = NSError(domain: "AuthFailure", code: 1, userInfo: [:])
-       
         next()
     }
 }
 
+// Variable to post/put data to (just for sample purposes)
+var name: String?
 
 // This route executes the echo middleware
 router.all(middleware: BasicAuthMiddleware())
@@ -64,7 +61,8 @@ router.all("/static", middleware: StaticFileServer())
 router.get("/hello") { _, response, next in
      response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
      do {
-         try response.status(HttpStatusCode.OK).send("Hello World, from Kitura!").end()
+         let fName = name ?? "World"
+         try response.status(HttpStatusCode.OK).send("Hello \(fName), from Kitura!").end()
      } catch {
          Log.error("Failed to send response \(error)")
      }
@@ -74,6 +72,7 @@ router.get("/hello") { _, response, next in
 router.post("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
+        name = try request.readString()
         try response.status(HttpStatusCode.OK).send("Got a POST request").end()
     } catch {
         Log.error("Failed to send response \(error)")
@@ -84,6 +83,7 @@ router.post("/hello") {request, response, next in
 router.put("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
+        name = try request.readString()
         try response.status(HttpStatusCode.OK).send("Got a PUT request").end()
     } catch {
         Log.error("Failed to send response \(error)")
@@ -148,7 +148,7 @@ router.get("/multi") { request, response, next in
 
 // Support for Mustache implemented for OSX only yet
 #if !os(Linux)
-router.setDefaultTemplateEngine(MustacheTemplateEngine())
+router.setDefaultTemplateEngine(templateEngine: MustacheTemplateEngine())
 
 router.get("/trimmer") { _, response, next in
     defer {
@@ -194,7 +194,7 @@ router.error { request, response, next in
 
 // A custom Not found handler
 router.all { request, response, next in
-        if  response.getStatusCode() == .NOT_FOUND  {
+        if  response.statusCode == .NOT_FOUND  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
@@ -209,5 +209,5 @@ router.all { request, response, next in
 }
 
 // Listen on port 8090
-let server = HttpServer.listen(8090, delegate: router)
+let server = HttpServer.listen(port: 8090, delegate: router)
 Server.run()
