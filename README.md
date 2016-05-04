@@ -26,7 +26,7 @@ This is a sample [Kitura](https://github.com/IBM-Swift/Kitura) application. See 
 2. Edit `manifest.yml` to contain your name and host.
 
 3. Edit `Package.swift` to contain your app name instead of "KituraSample".
-> Note: If you change the package name in `Package.swift`, you will also need to update the executable name in the Makefile.
+> Note: If you change the package name in `Package.swift`, you will also need to update the executable name in the Makefile. (i.e. Change `./.build/debug/KituraSample` to be `./.build/debug/<APP_NAME>`)
 
 ## Kitura Wiki
 Feel free to visit our [Wiki](https://github.com/IBM-Swift/Kitura/wiki) for our roadmap and some tutorials.
