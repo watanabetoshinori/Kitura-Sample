@@ -21,7 +21,7 @@ import Foundation
 import KituraSys
 import KituraNet
 import Kitura
-import KituraMustache
+//import KituraMustache
 
 import LoggerAPI
 import HeliumLogger
@@ -62,7 +62,7 @@ router.get("/hello") { _, response, next in
      response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
      do {
          let fName = name ?? "World"
-         try response.status(HttpStatusCode.OK).send("Hello \(fName), from Kitura!").end()
+         try response.status(.OK).send("Hello \(fName), from Kitura!").end()
      } catch {
          Log.error("Failed to send response \(error)")
      }
@@ -73,7 +73,7 @@ router.post("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         name = try request.readString()
-        try response.status(HttpStatusCode.OK).send("Got a POST request").end()
+        try response.status(.OK).send("Got a POST request").end()
     } catch {
         Log.error("Failed to send response \(error)")
     }
@@ -84,7 +84,7 @@ router.put("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
         name = try request.readString()
-        try response.status(HttpStatusCode.OK).send("Got a PUT request").end()
+        try response.status(.OK).send("Got a PUT request").end()
     } catch {
         Log.error("Failed to send response \(error)")
     }
@@ -94,7 +94,7 @@ router.put("/hello") {request, response, next in
 router.delete("/hello") {request, response, next in
     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
     do {
-        try response.status(HttpStatusCode.OK).send("Got a DELETE request").end()
+        try response.status(.OK).send("Got a DELETE request").end()
     } catch {
         Log.error("Failed to send response \(error)")
     }
@@ -103,7 +103,7 @@ router.delete("/hello") {request, response, next in
 // Error handling example
 router.get("/error") { _, response, next in
     Log.error("Example of error being set")
-    response.status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+    response.status(.internalServerError)
     response.error = NSError(domain: "RouterTestDomain", code: 1, userInfo: [:])
     next()
 }
@@ -124,7 +124,7 @@ router.get("/users/:user") { request, response, next in
     response.setHeader("Content-Type", value: "text/html; charset=utf-8")
     let p1 = request.params["user"] ?? "(nil)"
     do {
-        try response.status(HttpStatusCode.OK).send(
+        try response.status(.OK).send(
             "<!DOCTYPE html><html><body>" +
             "<b>User:</b> \(p1)" +
             "</body></html>\n\n").end()
@@ -135,45 +135,45 @@ router.get("/users/:user") { request, response, next in
 
 // Uses multiple handler blocks
 router.get("/multi", handler: { request, response, next in
-    response.status(HttpStatusCode.OK).send("I'm here!\n")
+    response.status(.OK).send("I'm here!\n")
     next()
 }, { request, response, next in
     response.send("Me too!\n")
     next()
 })
 router.get("/multi") { request, response, next in
-    response.status(HttpStatusCode.OK).send("I come afterward..\n")
+    response.status(.OK).send("I come afterward..\n")
     next()
 }
 
 // Support for Mustache implemented for OSX only yet
-#if !os(Linux)
-router.setDefaultTemplateEngine(templateEngine: MustacheTemplateEngine())
-
-router.get("/trimmer") { _, response, next in
-    defer {
-        next()
-    }
-    do {
-        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
-        var context: [String: Any] = [
-            "name": "Arthur",
-            "date": NSDate(),
-            "realDate": NSDate().addingTimeInterval(60*60*24*3),
-            "late": true
-        ]
-
-        // Let template format dates with `{{format(...)}}`
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .mediumStyle
-        context["format"] = dateFormatter
-
-        try response.render("document", context: context).end()
-    } catch {
-        Log.error("Failed to render template \(error)")
-    }
-}
-#endif
+//#if !os(Linux)
+//router.setDefaultTemplateEngine(templateEngine: MustacheTemplateEngine())
+//
+//router.get("/trimmer") { _, response, next in
+//    defer {
+//        next()
+//    }
+//    do {
+//        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
+//        var context: [String: Any] = [
+//            "name": "Arthur",
+//            "date": NSDate(),
+//            "realDate": NSDate().addingTimeInterval(60*60*24*3),
+//            "late": true
+//        ]
+//
+//        // Let template format dates with `{{format(...)}}`
+//        let dateFormatter = NSDateFormatter()
+//        dateFormatter.dateStyle = .mediumStyle
+//        context["format"] = dateFormatter
+//
+//        try response.render("document", context: context).end()
+//    } catch {
+//        Log.error("Failed to render template \(error)")
+//    }
+//}
+//#endif
 
 // Handles any errors that get set
 router.error { request, response, next in
@@ -194,7 +194,7 @@ router.error { request, response, next in
 
 // A custom Not found handler
 router.all { request, response, next in
-        if  response.statusCode == .NOT_FOUND  {
+        if  response.statusCode == .notFound  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
@@ -209,5 +209,5 @@ router.all { request, response, next in
 }
 
 // Listen on port 8090
-let server = HttpServer.listen(port: 8090, delegate: router)
+let server = HTTPServer.listen(port: 8090, delegate: router)
 Server.run()
