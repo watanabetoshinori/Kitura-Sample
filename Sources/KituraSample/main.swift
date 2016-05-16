@@ -59,7 +59,7 @@ router.all(middleware: BasicAuthMiddleware())
 router.all("/static", middleware: StaticFileServer())
 
 router.get("/hello") { _, response, next in
-     response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+     response.headers["Content-Type"] = "text/plain; charset=utf-8"
      do {
          let fName = name ?? "World"
          try response.status(.OK).send("Hello \(fName), from Kitura!").end()
@@ -70,7 +70,7 @@ router.get("/hello") { _, response, next in
 
 // This route accepts POST requests
 router.post("/hello") {request, response, next in
-    response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         name = try request.readString()
         try response.status(.OK).send("Got a POST request").end()
@@ -81,7 +81,7 @@ router.post("/hello") {request, response, next in
 
 // This route accepts PUT requests
 router.put("/hello") {request, response, next in
-    response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         name = try request.readString()
         try response.status(.OK).send("Got a PUT request").end()
@@ -92,7 +92,7 @@ router.put("/hello") {request, response, next in
 
 // This route accepts DELETE requests
 router.delete("/hello") {request, response, next in
-    response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         try response.status(.OK).send("Got a DELETE request").end()
     } catch {
@@ -121,7 +121,7 @@ router.get("/redir") { _, response, next in
 // Reading parameters
 // Accepts user as a parameter
 router.get("/users/:user") { request, response, next in
-    response.setHeader("Content-Type", value: "text/html; charset=utf-8")
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     let p1 = request.params["user"] ?? "(nil)"
     do {
         try response.status(.OK).send(
@@ -177,7 +177,7 @@ router.get("/multi") { request, response, next in
 
 // Handles any errors that get set
 router.error { request, response, next in
-    response.setHeader("Content-Type", value: "text/plain; charset=utf-8")
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         let errorDescription: String
         if let error = response.error {
