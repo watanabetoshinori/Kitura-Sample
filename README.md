@@ -9,7 +9,7 @@
 
 ## Summary
 
-This is a sample [Kitura](https://github.com/IBM-Swift/Kitura) application. See instructions for [Installation on OS X ](https://github.com/IBM-Swift/Kitura#installation-os-x) or [Installation on Linux](https://github.com/IBM-Swift/Kitura#installation-linux-apt-based).
+This is a sample [Kitura](https://github.com/IBM-Swift/Kitura/tree/master) application. See instructions for [Installation on OS X ](https://github.com/IBM-Swift/Kitura/tree/master#installation-os-x) or [Installation on Linux](https://github.com/IBM-Swift/Kitura/tree/master#installation-linux-apt-based).
 
 ## Clone, build and run
 1. `git clone https://github.com/IBM-Swift/Kitura-Sample.git && cd Kitura-Sample`
