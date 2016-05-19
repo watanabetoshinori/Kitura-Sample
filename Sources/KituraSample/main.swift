@@ -94,6 +94,7 @@ router.put("/hello") {request, response, next in
 router.delete("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
+        name = nil
         try response.status(.OK).send("Got a DELETE request").end()
     } catch {
         Log.error("Failed to send response \(error)")
@@ -168,7 +169,7 @@ router.get("/trimmer") { _, response, next in
         dateFormatter.dateStyle = .mediumStyle
         context["format"] = dateFormatter
 
-        try response.render("document", context: context).end()
+        try response.status(.OK).render("document", context: context).end()
     } catch {
         Log.error("Failed to render template \(error)")
     }
