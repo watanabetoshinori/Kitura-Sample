@@ -18,8 +18,6 @@
 
 import Foundation
 
-import KituraSys
-import KituraNet
 import Kitura
 import KituraMustache
 
