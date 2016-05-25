@@ -213,6 +213,8 @@ router.all { request, response, next in
     next()
 }
 
-// Listen on port 8090
-let server = HTTPServer.listen(port: 8090, delegate: router)
-Server.run()
+// Add HTTP Server to listen on port 8090
+Kitura.addHTTPServer(onPort: 8090, with: router)
+
+// start the framework - the servers added until now will start listening
+Kitura.run()
