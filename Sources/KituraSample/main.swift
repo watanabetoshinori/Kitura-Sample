@@ -18,10 +18,8 @@
 
 import Foundation
 
-import KituraSys
-import KituraNet
 import Kitura
-import KituraMustache
+//import KituraMustache
 
 import LoggerAPI
 import HeliumLogger
@@ -62,7 +60,7 @@ router.get("/hello") { _, response, next in
      response.headers["Content-Type"] = "text/plain; charset=utf-8"
      do {
          let fName = name ?? "World"
-         try response.status(.OK).send("Hello \(fName), from Kitura!").end()
+         try response.send("Hello \(fName), from Kitura!").end()
      } catch {
          Log.error("Failed to send response \(error)")
      }
@@ -73,7 +71,7 @@ router.post("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         name = try request.readString()
-        try response.status(.OK).send("Got a POST request").end()
+        try response.send("Got a POST request").end()
     } catch {
         Log.error("Failed to send response \(error)")
     }
@@ -84,7 +82,7 @@ router.put("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         name = try request.readString()
-        try response.status(.OK).send("Got a PUT request").end()
+        try response.send("Got a PUT request").end()
     } catch {
         Log.error("Failed to send response \(error)")
     }
@@ -95,7 +93,7 @@ router.delete("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     do {
         name = nil
-        try response.status(.OK).send("Got a DELETE request").end()
+        try response.send("Got a DELETE request").end()
     } catch {
         Log.error("Failed to send response \(error)")
     }
@@ -125,7 +123,7 @@ router.get("/users/:user") { request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     let p1 = request.params["user"] ?? "(nil)"
     do {
-        try response.status(.OK).send(
+        try response.send(
             "<!DOCTYPE html><html><body>" +
             "<b>User:</b> \(p1)" +
             "</body></html>\n\n").end()
@@ -136,45 +134,49 @@ router.get("/users/:user") { request, response, next in
 
 // Uses multiple handler blocks
 router.get("/multi", handler: { request, response, next in
-    response.status(.OK).send("I'm here!\n")
+    response.send("I'm here!\n")
     next()
 }, { request, response, next in
     response.send("Me too!\n")
     next()
 })
 router.get("/multi") { request, response, next in
-    response.status(.OK).send("I come afterward..\n")
-    next()
+    do {
+        try response.send("I come afterward..\n").end()
+    }
+    catch {
+        Log.error("Failed to send response \(error)")
+    }
 }
 
 // Support for Mustache implemented for OSX only yet
-#if !os(Linux)
-router.setDefaultTemplateEngine(templateEngine: MustacheTemplateEngine())
-
-router.get("/trimmer") { _, response, next in
-    defer {
-        next()
-    }
-    do {
-        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
-        var context: [String: Any] = [
-            "name": "Arthur",
-            "date": NSDate(),
-            "realDate": NSDate().addingTimeInterval(60*60*24*3),
-            "late": true
-        ]
-
-        // Let template format dates with `{{format(...)}}`
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .mediumStyle
-        context["format"] = dateFormatter
-
-        try response.status(.OK).render("document", context: context).end()
-    } catch {
-        Log.error("Failed to render template \(error)")
-    }
-}
-#endif
+//#if !os(Linux)
+//router.setDefaultTemplateEngine(templateEngine: MustacheTemplateEngine())
+//
+//router.get("/trimmer") { _, response, next in
+//    defer {
+//        next()
+//    }
+//    do {
+//        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
+//        var context: [String: Any] = [
+//            "name": "Arthur",
+//            "date": NSDate(),
+//            "realDate": NSDate().addingTimeInterval(60*60*24*3),
+//            "late": true
+//        ]
+//
+//        // Let template format dates with `{{format(...)}}`
+//        let dateFormatter = NSDateFormatter()
+//        dateFormatter.dateStyle = .mediumStyle
+//        context["format"] = dateFormatter
+//
+//        try response.render("document", context: context).end()
+//    } catch {
+//        Log.error("Failed to render template \(error)")
+//    }
+//}
+//#endif
 
 // Handles any errors that get set
 router.error { request, response, next in
@@ -195,11 +197,11 @@ router.error { request, response, next in
 
 // A custom Not found handler
 router.all { request, response, next in
-        if  response.statusCode == .notFound  {
+    if  response.statusCode == .unknown  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
             do {
-                try response.send("Route not found in Sample application!").end()
+                try response.status(.notFound).send("Route not found in Sample application!").end()
             }
             catch {
                 Log.error("Failed to send response \(error)")
@@ -209,6 +211,8 @@ router.all { request, response, next in
     next()
 }
 
-// Listen on port 8090
-let server = HTTPServer.listen(port: 8090, delegate: router)
-Server.run()
+// Add HTTP Server to listen on port 8090
+Kitura.addHTTPServer(onPort: 8090, with: router)
+
+// start the framework - the servers added until now will start listening
+Kitura.run()
