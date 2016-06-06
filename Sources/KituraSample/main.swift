@@ -121,7 +121,7 @@ router.get("/redir") { _, response, next in
 // Accepts user as a parameter
 router.get("/users/:user") { request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
-    let p1 = request.params["user"] ?? "(nil)"
+    let p1 = request.parameters["user"] ?? "(nil)"
     do {
         try response.send(
             "<!DOCTYPE html><html><body>" +
@@ -199,7 +199,7 @@ router.error { request, response, next in
 router.all { request, response, next in
     if  response.statusCode == .unknown  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
-        if  request.originalUrl != "/"  &&  request.originalUrl != ""  {
+        if  request.originalURL != "/"  &&  request.originalURL != ""  {
             do {
                 try response.status(.notFound).send("Route not found in Sample application!").end()
             }
