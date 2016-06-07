@@ -58,45 +58,29 @@ router.all("/static", middleware: StaticFileServer())
 
 router.get("/hello") { _, response, next in
      response.headers["Content-Type"] = "text/plain; charset=utf-8"
-     do {
-         let fName = name ?? "World"
-         try response.send("Hello \(fName), from Kitura!").end()
-     } catch {
-         Log.error("Failed to send response \(error)")
-     }
+     let fName = name ?? "World"
+     try response.send("Hello \(fName), from Kitura!").end()
 }
 
 // This route accepts POST requests
 router.post("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
-    do {
-        name = try request.readString()
-        try response.send("Got a POST request").end()
-    } catch {
-        Log.error("Failed to send response \(error)")
-    }
+    name = try request.readString()
+    try response.send("Got a POST request").end()
 }
 
 // This route accepts PUT requests
 router.put("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
-    do {
-        name = try request.readString()
-        try response.send("Got a PUT request").end()
-    } catch {
-        Log.error("Failed to send response \(error)")
-    }
+    name = try request.readString()
+    try response.send("Got a PUT request").end()
 }
 
 // This route accepts DELETE requests
 router.delete("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
-    do {
-        name = nil
-        try response.send("Got a DELETE request").end()
-    } catch {
-        Log.error("Failed to send response \(error)")
-    }
+    name = nil
+    try response.send("Got a DELETE request").end()
 }
 
 // Error handling example
@@ -109,11 +93,7 @@ router.get("/error") { _, response, next in
 
 // Redirection example
 router.get("/redir") { _, response, next in
-    do {
-        try response.redirect("http://www.ibm.com")
-    } catch {
-         Log.error("Failed to redirect \(error)")
-    }
+    try response.redirect("http://www.ibm.com")
     next()
 }
 
@@ -122,14 +102,10 @@ router.get("/redir") { _, response, next in
 router.get("/users/:user") { request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     let p1 = request.parameters["user"] ?? "(nil)"
-    do {
-        try response.send(
-            "<!DOCTYPE html><html><body>" +
-            "<b>User:</b> \(p1)" +
-            "</body></html>\n\n").end()
-    } catch {
-        Log.error("Failed to send response \(error)")
-    }
+    try response.send(
+        "<!DOCTYPE html><html><body>" +
+        "<b>User:</b> \(p1)" +
+        "</body></html>\n\n").end()
 }
 
 // Uses multiple handler blocks
@@ -141,12 +117,7 @@ router.get("/multi", handler: { request, response, next in
     next()
 })
 router.get("/multi") { request, response, next in
-    do {
-        try response.send("I come afterward..\n").end()
-    }
-    catch {
-        Log.error("Failed to send response \(error)")
-    }
+    try response.send("I come afterward..\n").end()
 }
 
 // Support for Mustache implemented for OSX only yet
@@ -157,42 +128,33 @@ router.get("/multi") { request, response, next in
 //    defer {
 //        next()
 //    }
-//    do {
-//        // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
-//        var context: [String: Any] = [
-//            "name": "Arthur",
-//            "date": NSDate(),
-//            "realDate": NSDate().addingTimeInterval(60*60*24*3),
-//            "late": true
-//        ]
+//    // the example from https://github.com/groue/GRMustache.swift/blob/master/README.md
+//    var context: [String: Any] = [
+//        "name": "Arthur",
+//        "date": NSDate(),
+//        "realDate": NSDate().addingTimeInterval(60*60*24*3),
+//        "late": true
+//    ]
 //
-//        // Let template format dates with `{{format(...)}}`
-//        let dateFormatter = NSDateFormatter()
-//        dateFormatter.dateStyle = .mediumStyle
-//        context["format"] = dateFormatter
+//    // Let template format dates with `{{format(...)}}`
+//    let dateFormatter = NSDateFormatter()
+//    dateFormatter.dateStyle = .mediumStyle
+//    context["format"] = dateFormatter
 //
-//        try response.render("document", context: context).end()
-//    } catch {
-//        Log.error("Failed to render template \(error)")
-//    }
+//    try response.render("document", context: context).end()
 //}
 //#endif
 
 // Handles any errors that get set
 router.error { request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
-    do {
-        let errorDescription: String
-        if let error = response.error {
-            errorDescription = "\(error)"
-        } else {
-            errorDescription = "Unknown error"
-        }
-        try response.send("Caught the error: \(errorDescription)").end()
+    let errorDescription: String
+    if let error = response.error {
+        errorDescription = "\(error)"
+    } else {
+        errorDescription = "Unknown error"
     }
-    catch {
-        Log.error("Failed to send response \(error)")
-    }
+    try response.send("Caught the error: \(errorDescription)").end()
 }
 
 // A custom Not found handler
@@ -200,12 +162,7 @@ router.all { request, response, next in
     if  response.statusCode == .unknown  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if  request.originalURL != "/"  &&  request.originalURL != ""  {
-            do {
-                try response.status(.notFound).send("Route not found in Sample application!").end()
-            }
-            catch {
-                Log.error("Failed to send response \(error)")
-            }
+            try response.status(.notFound).send("Route not found in Sample application!").end()
         }
     }
     next()
