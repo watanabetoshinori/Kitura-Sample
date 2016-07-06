@@ -19,12 +19,13 @@
 import Foundation
 
 import Kitura
+import KituraNet
+import KituraSession
 //import KituraMustache
 
 import LoggerAPI
 import HeliumLogger
 
-import KituraNet
 import SwiftyJSON
 
 #if os(Linux)
@@ -37,6 +38,9 @@ let router = Router()
 
 // Using an implementation for a Logger
 HeliumLogger.use()
+
+// Using a session
+let session = Session(secret: "Some secret")
 
 /**
  * RouterMiddleware can be used for intercepting requests and handling custom behavior
@@ -64,6 +68,9 @@ class ContentTypeMiddleware: RouterMiddleware {
 
 // Variable to post/put data to (just for sample purposes)
 var name: String?
+
+// Session enabled
+router.all(middleware: session)
 
 // This route executes the echo middleware
 router.all(middleware: BasicAuthMiddleware())
@@ -96,6 +103,27 @@ router.put("/hello") {request, response, next in
 router.delete("/hello") {_, response, next in
     name = nil
     try response.end("Got a DELETE request")
+}
+
+// Session example
+router.get("/session/add/:name") { request, response, next in
+    let name = request.parameters["name"] ?? ""
+    request.session?["user"] = JSON(["name": name])
+    request.session?.save(callback: { (error) in
+        if let error = error {
+            Log.error("\(error)")
+        }
+    })
+    
+    try response.end("\(name) is stored in the session.")
+}
+
+router.get("/session/show") { request, response, next in
+    let json = request.session?["user"]
+    
+    let name = json?["name"].string ?? "(nill)"
+
+    try response.end("Hello \(name), from Kitura")
 }
 
 // Error handling example
