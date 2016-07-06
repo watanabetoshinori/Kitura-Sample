@@ -54,6 +54,7 @@ var name: String?
 // This route executes the echo middleware
 router.all(middleware: BasicAuthMiddleware())
 
+// Serve static content from "public"
 router.all("/static", middleware: StaticFileServer())
 
 // This route accepts GET requests
@@ -78,8 +79,7 @@ router.put("/hello") {request, response, next in
 }
 
 // This route accepts DELETE requests
-router.delete("/hello") {request, response, next in
-    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+router.delete("/hello") {_, response, next in
     name = nil
     try response.end("Got a DELETE request")
 }
@@ -110,15 +110,16 @@ router.get("/users/:user") { request, response, next in
 }
 
 // Uses multiple handler blocks
-router.get("/multi", handler: { request, response, next in
+router.get("/multi", handler: { _, response, next in
     response.send("I'm here!\n")
     next()
-}, { request, response, next in
+}, { _, response, next in
     response.send("Me too!\n")
     next()
 })
-router.get("/multi") { request, response, next in
-    try response.send("I come afterward..\n").end()
+
+router.get("/multi") { _, response, next in
+    try response.end("I come afterward..\n")
 }
 
 // Support for Mustache implemented for OSX only yet
@@ -147,8 +148,7 @@ router.get("/multi") { request, response, next in
 //#endif
 
 // Handles any errors that get set
-router.error { request, response, next in
-    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+router.error { _, response, next in
     let errorDescription: String
     if let error = response.error {
         errorDescription = "\(error)"
@@ -160,7 +160,7 @@ router.error { request, response, next in
 
 // A custom Not found handler
 router.all { request, response, next in
-    if  response.statusCode == .unknown  {
+    if response.statusCode == .unknown {
         // Remove this wrapping if statement, if you want to handle requests to / as well
         if request.originalURL != "/" && request.originalURL != ""  {
             try response.status(.notFound).end("Route not found in Sample application!")
