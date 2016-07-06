@@ -48,32 +48,42 @@ class BasicAuthMiddleware: RouterMiddleware {
     }
 }
 
+/**
+ * ContentTypeMiddleware set default Content-Type.
+ */
+class ContentTypeMiddleware: RouterMiddleware {
+    func handle(request: RouterRequest, response: RouterResponse, next: () -> Void) {
+        response.type("html", charset: "utf-8")
+        next()
+    }
+}
+
 // Variable to post/put data to (just for sample purposes)
 var name: String?
 
 // This route executes the echo middleware
 router.all(middleware: BasicAuthMiddleware())
 
+// This route executes the default content type middleware
+router.all(middleware: ContentTypeMiddleware())
+
 // Serve static content from "public"
 router.all("/static", middleware: StaticFileServer())
 
 // This route accepts GET requests
 router.get("/hello") { _, response, next in
-     response.headers["Content-Type"] = "text/plain; charset=utf-8"
      let fName = name ?? "World"
      try response.end("Hello \(fName), from Kitura!")
 }
 
 // This route accepts POST requests
 router.post("/hello") {request, response, next in
-    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     name = try request.readString()
     try response.end("Got a POST request")
 }
 
 // This route accepts PUT requests
 router.put("/hello") {request, response, next in
-    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     name = try request.readString()
     try response.end("Got a PUT request")
 }
@@ -101,7 +111,6 @@ router.get("/redir") { _, response, next in
 // Reading parameters
 // Accepts user as a parameter
 router.get("/users/:user") { request, response, next in
-    response.headers["Content-Type"] = "text/plain; charset=utf-8"
     let p1 = request.parameters["user"] ?? "(nil)"
     try response.end(
         "<!DOCTYPE html><html><body>" +
