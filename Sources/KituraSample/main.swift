@@ -25,6 +25,7 @@ import LoggerAPI
 import HeliumLogger
 
 import KituraNet
+import SwiftyJSON
 
 #if os(Linux)
     import Glibc
@@ -116,6 +117,12 @@ router.get("/txt") { _, response, next in
     response.type("txt")
     let fName = name ?? "World"
     try response.end("Hello \(fName), from Kitura!")
+}
+
+// JSON example
+router.get("/json") { _, response, next in
+    let json = JSON(["name":"Jack", "age": 25])
+    try response.send(json: json).end()
 }
 
 // HTTP client example
