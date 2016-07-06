@@ -24,9 +24,12 @@ import Kitura
 import LoggerAPI
 import HeliumLogger
 
+import KituraNet
+
 #if os(Linux)
     import Glibc
 #endif
+
 
 // All Web apps need a router to define routes
 let router = Router()
@@ -113,6 +116,31 @@ router.get("/txt") { _, response, next in
     response.type("txt")
     let fName = name ?? "World"
     try response.end("Hello \(fName), from Kitura!")
+}
+
+// HTTP client example
+router.get("/feed") { _, response, next in
+    var options: [ClientRequest.Options] = []
+    options.append(.method("GET"))
+    options.append(.schema("https://"))
+    options.append(.hostname("developer.ibm.com"))
+    options.append(.path("/swift/feed/"))
+    
+    let request = HTTP.request(options) { httpResponse in
+        do {
+            var body = NSMutableData()
+            try httpResponse?.readAllData(into: body)
+            let str = String(data: body, encoding: NSUTF8StringEncoding)!
+            
+            response.type("rss")
+            
+            try response.end(str)
+        } catch let error {
+            try! response.end("Caught the error: \(error)")
+        }
+    }
+    
+    request.end()
 }
 
 // Reading parameters
