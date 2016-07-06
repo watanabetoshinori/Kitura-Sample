@@ -32,7 +32,7 @@ import HeliumLogger
 let router = Router()
 
 // Using an implementation for a Logger
-Log.logger = HeliumLogger()
+HeliumLogger.use()
 
 /**
 * RouterMiddleware can be used for intercepting requests and handling custom behavior
@@ -59,28 +59,28 @@ router.all("/static", middleware: StaticFileServer())
 router.get("/hello") { _, response, next in
      response.headers["Content-Type"] = "text/plain; charset=utf-8"
      let fName = name ?? "World"
-     try response.send("Hello \(fName), from Kitura!").end()
+     try response.end("Hello \(fName), from Kitura!")
 }
 
 // This route accepts POST requests
 router.post("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     name = try request.readString()
-    try response.send("Got a POST request").end()
+    try response.end("Got a POST request")
 }
 
 // This route accepts PUT requests
 router.put("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     name = try request.readString()
-    try response.send("Got a PUT request").end()
+    try response.end("Got a PUT request")
 }
 
 // This route accepts DELETE requests
 router.delete("/hello") {request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     name = nil
-    try response.send("Got a DELETE request").end()
+    try response.end("Got a DELETE request")
 }
 
 // Error handling example
@@ -102,10 +102,10 @@ router.get("/redir") { _, response, next in
 router.get("/users/:user") { request, response, next in
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     let p1 = request.parameters["user"] ?? "(nil)"
-    try response.send(
+    try response.end(
         "<!DOCTYPE html><html><body>" +
         "<b>User:</b> \(p1)" +
-        "</body></html>\n\n").end()
+        "</body></html>\n\n")
 }
 
 // Uses multiple handler blocks
@@ -154,15 +154,15 @@ router.error { request, response, next in
     } else {
         errorDescription = "Unknown error"
     }
-    try response.send("Caught the error: \(errorDescription)").end()
+    try response.end("Caught the error: \(errorDescription)")
 }
 
 // A custom Not found handler
 router.all { request, response, next in
     if  response.statusCode == .unknown  {
         // Remove this wrapping if statement, if you want to handle requests to / as well
-        if  request.originalURL != "/"  &&  request.originalURL != ""  {
-            try response.status(.notFound).send("Route not found in Sample application!").end()
+        if request.originalURL != "/" && request.originalURL != ""  {
+            try response.status(.notFound).end("Route not found in Sample application!")
         }
     }
     next()
