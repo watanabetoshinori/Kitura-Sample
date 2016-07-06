@@ -108,6 +108,13 @@ router.get("/redir") { _, response, next in
     next()
 }
 
+// Content-Type example
+router.get("/txt") { _, response, next in
+    response.type("txt")
+    let fName = name ?? "World"
+    try response.end("Hello \(fName), from Kitura!")
+}
+
 // Reading parameters
 // Accepts user as a parameter
 router.get("/users/:user") { request, response, next in
