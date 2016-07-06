@@ -35,9 +35,9 @@ let router = Router()
 HeliumLogger.use()
 
 /**
-* RouterMiddleware can be used for intercepting requests and handling custom behavior
-* such as authentication and other routing
-*/
+ * RouterMiddleware can be used for intercepting requests and handling custom behavior
+ * such as authentication and other routing
+ */
 class BasicAuthMiddleware: RouterMiddleware {
     func handle(request: RouterRequest, response: RouterResponse, next: () -> Void) {
         let authString = request.headers["Authorization"]
@@ -56,6 +56,7 @@ router.all(middleware: BasicAuthMiddleware())
 
 router.all("/static", middleware: StaticFileServer())
 
+// This route accepts GET requests
 router.get("/hello") { _, response, next in
      response.headers["Content-Type"] = "text/plain; charset=utf-8"
      let fName = name ?? "World"
