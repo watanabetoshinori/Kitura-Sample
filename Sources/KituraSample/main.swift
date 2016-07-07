@@ -26,6 +26,9 @@ import KituraSession
 import LoggerAPI
 import HeliumLogger
 
+import Credentials
+import CredentialsHTTP
+
 import SwiftyJSON
 
 #if os(Linux)
@@ -55,6 +58,20 @@ class BasicAuthMiddleware: RouterMiddleware {
         next()
     }
 }
+    
+// Basic Authentication
+let users = ["John" : "12345", "Mary" : "qwerasdf"]
+
+let basicCredentials = CredentialsHTTPBasic(userProfileLoader: { userId, callback in
+    if let storedPassword = users[userId] {
+        callback(userProfile: UserProfile(id: userId, displayName: userId, provider: "HTTPBasic"), password: storedPassword)
+    } else {
+        callback(userProfile: nil, password: nil)
+    }
+})
+
+let credentials = Credentials()
+credentials.register(plugin: basicCredentials)
 
 /**
  * ContentTypeMiddleware set default Content-Type.
@@ -74,6 +91,8 @@ router.all(middleware: session)
 
 // This route executes the echo middleware
 router.all(middleware: BasicAuthMiddleware())
+// Basic Authentication enabled
+router.all("/secure", middleware: credentials)
 
 // This route executes the default content type middleware
 router.all(middleware: ContentTypeMiddleware())
@@ -124,6 +143,12 @@ router.get("/session/show") { request, response, next in
     let name = json?["name"].string ?? "(nill)"
 
     try response.end("Hello \(name), from Kitura")
+}
+
+// Basic Authentication example
+router.get("/secure") { _, response, next in
+    let fName = name ?? "World"
+    try response.end("Hello \(fName), this is secure page!")
 }
 
 // Error handling example
